@@ -1,1 +1,5 @@
-{}
+{
+  "projects": {
+    "test": "firebase-setup-221202"
+  }
+}
