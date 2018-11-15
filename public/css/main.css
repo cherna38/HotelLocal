@@ -409,7 +409,7 @@ legend {
 }
 
 .s002 {
-  min-height: 93.5vh;
+  min-height: 100vh;
   display: -ms-flexbox;
   display: flex;
   -ms-flex-pack: center;
@@ -432,10 +432,9 @@ legend {
   font-size: 60px;
   line-height: 1;
   color: rgb(0, 0, 0);
-  margin-bottom: 0px;
+  margin-bottom: 60px;
   font-weight: 400;
   text-align: center;
-  text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 }
 
 .s002 form .inner-form {
@@ -486,7 +485,7 @@ legend {
   .s002 form legend {
     font-size: 50px;
     text-align: center;
-    margin-bottom: 0px;
+    margin-bottom: 50px;
   }
   .s002 form .inner-form {
     -ms-flex-wrap: wrap;
@@ -511,7 +510,7 @@ legend {
 @media screen and (max-width: 767px) {
   .s002 form legend {
     font-size: 40px;
-    margin-bottom: 0px;
+    margin-bottom: 40px;
   }
   .s002 form .inner-form .input-field.second-wrap, .s002 form .inner-form .input-field.third-wrap, .s002 form .inner-form .input-field.fouth-wrap, .s002 form .inner-form .input-field.fifth-wrap {
     width: 100%;
