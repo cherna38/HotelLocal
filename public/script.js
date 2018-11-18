@@ -1,6 +1,5 @@
 // Initialize Firebase
 
-
 /* Primary code references for search bar (so far):
  * 
  * Get started with Cloud Firestore:
@@ -37,36 +36,33 @@ const searchOutput = document.querySelector("#results");
 
 const parkButton = document.querySelector("#parkFilter");
 const wifiButton = document.querySelector("#wifiFilter");
-const rateAscButton = document.querySelector("#ratingLow");
-const rateDesButton = document.querySelector("#ratingHigh");
+//const rateAscButton = document.querySelector("#ratingLow");
+//const rateDesButton = document.querySelector("#ratingHigh");
+const rateOneButton = document.querySelector("#ratingOne");
+const rateTwoButton = document.querySelector("#ratingTwo");
+const rateThreeButton = document.querySelector("#ratingThree");
+const rateFourButton = document.querySelector("#ratingFour");
 
+//Making universal input variable
+var inputCity = '';
 
 //Go through each document in hotel collection (given a city document) to print
-function hotelLoop(hotelList, park, wifi, rate) {
+function hotelLoop(hotelList, park, wifi, rate, rateIn){
 	//Clear output box upon each search request
-	console.log("In hotelLoop");
 	searchOutput.innerText = "";
 	//refer to hotels collection in given city
 	const hotelQuery = hotelList.collection('Hotels');
 	
-	if (rate == 1) {
+	if (rate) {
 		//within hotels collection, call hotelPrint on each hotel document
-		//sort by rating, from lowest to highest
-		hotelQuery.orderBy('Rating').get().then(function(hotelSnap) {
+		//based on rating >= rate stars input
+		hotelQuery.where('Rating', '>=', rateIn).orderBy('Rating', 'desc').get().then(function(hotelSnap) {
 			hotelSnap.docs.forEach(function(hotelDoc) {
 				hotelPrint(hotelDoc, park, wifi, rate);
 			})
 		})
 	}
-	else if (rate == 2) {
-		//within hotels collection, call hotelPrint on each hotel document
-		//sort by rating, with descending order
-		hotelQuery.orderBy('Rating', 'desc').get().then(function(hotelSnap) {
-			hotelSnap.docs.forEach(function(hotelDoc) {
-				hotelPrint(hotelDoc, park, wifi, rate);
-			})
-		})
-	}
+	
 	else {
 		//within hotels collection, call hotelPrint on each hotel document
 		hotelQuery.get().then(function(hotelSnap) {
@@ -114,15 +110,15 @@ function hotelPrint(hotel, park, wifi, rate) {
 
 //Linking up functions to actual search bar functionality
 searchButton.addEventListener("click", function() {
-	const inputCity = searchInput.value;
+	inputCity = searchInput.value;
 	
 	//Given user's searchbar input, if city is valid, call hotelLoop
 	if (inputCity == "Palo Alto") {;
-		hotelLoop(paRef, 0, 0, 0);
+		hotelLoop(paRef, 0, 0, 0, 0);
 	} else if (inputCity == "San Luis Obispo") {
-		hotelLoop(sloRef, 0, 0, 0);
+		hotelLoop(sloRef, 0, 0, 0, 0);
 	} else if (inputCity == "Santa Monica") {
-		hotelLoop(smRef, 0, 0, 0);
+		hotelLoop(smRef, 0, 0, 0, 0);
 	} else {
 		//Otherwise, print unavailable message and display window
 		searchOutput.innerText = "Information for hotels in " + inputCity + " unavailable\n";
@@ -131,15 +127,15 @@ searchButton.addEventListener("click", function() {
 })
 
 parkButton.addEventListener("click", function() {
-	const pIn = searchInput.value;
+	inputCity = searchInput.value;
 	const park = 1;
 	//Given user's searchbar input, if city is valid, call hotelLoop
-	if (pIn == "Palo Alto") {;
-		hotelLoop(paRef, park, 0, 0);
-	} else if (pIn == "San Luis Obispo") {
-		hotelLoop(sloRef, park, 0, 0);
-	} else if (pIn == "Santa Monica") {
-		hotelLoop(smRef, park, 0, 0);
+	if (inputCity == "Palo Alto") {;
+		hotelLoop(paRef, park, 0, 0, 0);
+	} else if (inputCity == "San Luis Obispo") {
+		hotelLoop(sloRef, park, 0, 0, 0);
+	} else if (inputCity == "Santa Monica") {
+		hotelLoop(smRef, park, 0, 0, 0);
 	} else {
 		//Otherwise, print unavailable message and display window
 		searchOutput.innerText = "Information for hotels in " + inputCity + " unavailable\n";
@@ -148,15 +144,15 @@ parkButton.addEventListener("click", function() {
 })
 
 wifiButton.addEventListener("click", function() {
-	const wIn = searchInput.value;
+	inputCity = searchInput.value;
 	const wifi = 1;
 	//Given user's searchbar input, if city is valid, call hotelLoop
-	if (wIn == "Palo Alto") {;
-		hotelLoop(paRef, 0, wifi, 0);
-	} else if (wIn == "San Luis Obispo") {
-		hotelLoop(sloRef, 0, wifi, 0);
-	} else if (wIn == "Santa Monica") {
-		hotelLoop(smRef, 0, wifi, 0);
+	if (inputCity == "Palo Alto") {;
+		hotelLoop(paRef, 0, wifi, 0, 0);
+	} else if (inputCity == "San Luis Obispo") {
+		hotelLoop(sloRef, 0, wifi, 0, 0);
+	} else if (inputCity == "Santa Monica") {
+		hotelLoop(smRef, 0, wifi, 0, 0);
 	} else {
 		//Otherwise, print unavailable message and display window
 		searchOutput.innerText = "Information for hotels in " + inputCity + " unavailable\n";
@@ -164,16 +160,16 @@ wifiButton.addEventListener("click", function() {
 	}
 })
 
-rateAscButton.addEventListener("click", function() {
-	const rateIn = searchInput.value;
-	const rate = 1;
+rateOneButton.addEventListener("click", function() {
+	inputCity = searchInput.value;
+	const rateOne = 1;
 	//Given user's searchbar input, if city is valid, call hotelLoop
-	if (rateIn == "Palo Alto") {;
-		hotelLoop(paRef, 0, 0, rate);
-	} else if (rateIn == "San Luis Obispo") {
-		hotelLoop(sloRef, 0, 0, rate);
-	} else if (rateIn == "Santa Monica") {
-		hotelLoop(smRef, 0, 0, rate);
+	if (inputCity == "Palo Alto") {;
+		hotelLoop(paRef, 0, 0, 1, rateOne);
+	} else if (inputCity == "San Luis Obispo") {
+		hotelLoop(sloRef, 0, 0, 1, rateOne);
+	} else if (inputCity == "Santa Monica") {
+		hotelLoop(smRef, 0, 0, 1, rateOne);
 	} else {
 		//Otherwise, print unavailable message and display window
 		searchOutput.innerText = "Information for hotels in " + inputCity + " unavailable\n";
@@ -181,16 +177,16 @@ rateAscButton.addEventListener("click", function() {
 	}
 })
 
-rateDesButton.addEventListener("click", function() {
-	const rateIn = searchInput.value;
-	const rate = 2;
+rateTwoButton.addEventListener("click", function() {
+	inputCity = searchInput.value;
+	const rateTwo = 2;
 	//Given user's searchbar input, if city is valid, call hotelLoop
-	if (rateIn == "Palo Alto") {;
-		hotelLoop(paRef, 0, 0, rate);
-	} else if (rateIn == "San Luis Obispo") {
-		hotelLoop(sloRef, 0, 0, rate);
-	} else if (rateIn == "Santa Monica") {
-		hotelLoop(smRef, 0, 0, rate);
+	if (inputCity == "Palo Alto") {;
+		hotelLoop(paRef, 0, 0, 1, rateTwo);
+	} else if (inputCity == "San Luis Obispo") {
+		hotelLoop(sloRef, 0, 0, 1, rateTwo);
+	} else if (inputCity == "Santa Monica") {
+		hotelLoop(smRef, 0, 0, 1, rateTwo);
 	} else {
 		//Otherwise, print unavailable message and display window
 		searchOutput.innerText = "Information for hotels in " + inputCity + " unavailable\n";
@@ -198,3 +194,36 @@ rateDesButton.addEventListener("click", function() {
 	}
 })
 
+rateThreeButton.addEventListener("click", function() {
+	inputCity = searchInput.value;
+	const rateThree = 3;
+	//Given user's searchbar input, if city is valid, call hotelLoop
+	if (inputCity == "Palo Alto") {;
+		hotelLoop(paRef, 0, 0, 1, rateThree);
+	} else if (inputCity == "San Luis Obispo") {
+		hotelLoop(sloRef, 0, 0, 1, rateThree);
+	} else if (inputCity == "Santa Monica") {
+		hotelLoop(smRef, 0, 0, 1, rateThree);
+	} else {
+		//Otherwise, print unavailable message and display window
+		searchOutput.innerText = "Information for hotels in " + inputCity + " unavailable\n";
+		window.alert("Sorry, we don't have info for hotels in that city yet.");
+	}
+})
+
+rateFourButton.addEventListener("click", function() {
+	inputCity = searchInput.value;
+	const rateFour = 4;
+	//Given user's searchbar input, if city is valid, call hotelLoop
+	if (inputCity == "Palo Alto") {;
+		hotelLoop(paRef, 0, 0, 1, rateFour);
+	} else if (inputCity == "San Luis Obispo") {
+		hotelLoop(sloRef, 0, 0, 1, rateFour);
+	} else if (inputCity == "Santa Monica") {
+		hotelLoop(smRef, 0, 0, 1, rateFour);
+	} else {
+		//Otherwise, print unavailable message and display window
+		searchOutput.innerText = "Information for hotels in " + inputCity + " unavailable\n";
+		window.alert("Sorry, we don't have info for hotels in that city yet.");
+	}
+})
