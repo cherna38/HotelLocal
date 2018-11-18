@@ -1,6 +1,5 @@
 // Initialize Firebase
 
-
 /* Primary code references for search bar (so far):
  * 
  * Get started with Cloud Firestore:
@@ -50,34 +49,20 @@ var inputCity = '';
 //Go through each document in hotel collection (given a city document) to print
 function hotelLoop(hotelList, park, wifi, rate, rateIn){
 	//Clear output box upon each search request
-	console.log("In hotelLoop");
 	searchOutput.innerText = "";
 	//refer to hotels collection in given city
 	const hotelQuery = hotelList.collection('Hotels');
 	
-	if (rate == 1) {
+	if (rate) {
 		//within hotels collection, call hotelPrint on each hotel document
-		//sort by rating, from lowest to highest
-		/*hotelQuery.orderBy('Rating').get().then(function(hotelSnap) {
-			hotelSnap.docs.forEach(function(hotelDoc) {
-				hotelPrint(hotelDoc, park, wifi, rate);
-			})
-		})*/
+		//based on rating >= rate stars input
 		hotelQuery.where('Rating', '>=', rateIn).orderBy('Rating', 'desc').get().then(function(hotelSnap) {
 			hotelSnap.docs.forEach(function(hotelDoc) {
 				hotelPrint(hotelDoc, park, wifi, rate);
 			})
 		})
 	}
-	/*else if (rate == 2) {
-		//within hotels collection, call hotelPrint on each hotel document
-		//sort by rating, with descending order
-		hotelQuery.orderBy('Rating', 'desc').get().then(function(hotelSnap) {
-			hotelSnap.docs.forEach(function(hotelDoc) {
-				hotelPrint(hotelDoc, park, wifi, rate);
-			})
-		})
-	}*/
+	
 	else {
 		//within hotels collection, call hotelPrint on each hotel document
 		hotelQuery.get().then(function(hotelSnap) {
@@ -176,7 +161,6 @@ wifiButton.addEventListener("click", function() {
 })
 
 rateOneButton.addEventListener("click", function() {
-	//window.alert("Rating 1 & up! o A o");
 	inputCity = searchInput.value;
 	const rateOne = 1;
 	//Given user's searchbar input, if city is valid, call hotelLoop
@@ -194,7 +178,6 @@ rateOneButton.addEventListener("click", function() {
 })
 
 rateTwoButton.addEventListener("click", function() {
-	//window.alert("Rating 2 & up! o w o");
 	inputCity = searchInput.value;
 	const rateTwo = 2;
 	//Given user's searchbar input, if city is valid, call hotelLoop
@@ -212,7 +195,6 @@ rateTwoButton.addEventListener("click", function() {
 })
 
 rateThreeButton.addEventListener("click", function() {
-	//window.alert("Rating 3 & up! n w n");
 	inputCity = searchInput.value;
 	const rateThree = 3;
 	//Given user's searchbar input, if city is valid, call hotelLoop
@@ -230,7 +212,6 @@ rateThreeButton.addEventListener("click", function() {
 })
 
 rateFourButton.addEventListener("click", function() {
-	//window.alert("Rating 4 & up! u w u");
 	inputCity = searchInput.value;
 	const rateFour = 4;
 	//Given user's searchbar input, if city is valid, call hotelLoop
@@ -246,38 +227,3 @@ rateFourButton.addEventListener("click", function() {
 		window.alert("Sorry, we don't have info for hotels in that city yet.");
 	}
 })
-
-/*rateAscButton.addEventListener("click", function() {
-	const rateIn = searchInput.value;
-	const rate = 1;
-	//Given user's searchbar input, if city is valid, call hotelLoop
-	if (rateIn == "Palo Alto") {;
-		hotelLoop(paRef, 0, 0, rate);
-	} else if (rateIn == "San Luis Obispo") {
-		hotelLoop(sloRef, 0, 0, rate);
-	} else if (rateIn == "Santa Monica") {
-		hotelLoop(smRef, 0, 0, rate);
-	} else {
-		//Otherwise, print unavailable message and display window
-		searchOutput.innerText = "Information for hotels in " + inputCity + " unavailable\n";
-		window.alert("Sorry, we don't have info for hotels in that city yet.");
-	}
-})*/
-
-/*rateDesButton.addEventListener("click", function() {
-	const rateIn = searchInput.value;
-	const rate = 2;
-	//Given user's searchbar input, if city is valid, call hotelLoop
-	if (rateIn == "Palo Alto") {;
-		hotelLoop(paRef, 0, 0, rate);
-	} else if (rateIn == "San Luis Obispo") {
-		hotelLoop(sloRef, 0, 0, rate);
-	} else if (rateIn == "Santa Monica") {
-		hotelLoop(smRef, 0, 0, rate);
-	} else {
-		//Otherwise, print unavailable message and display window
-		searchOutput.innerText = "Information for hotels in " + inputCity + " unavailable\n";
-		window.alert("Sorry, we don't have info for hotels in that city yet.");
-	}
-})*/
-
