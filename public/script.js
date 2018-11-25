@@ -114,10 +114,11 @@ var config = {
      searchOutput.innerText += "\tRating: " + currentHotel.Rating + ",\tWifi: ";
      
      if (currentHotel.Wifi == true) {
-         searchOutput.innerText += "available\n";
+         searchOutput.innerText += "available\n\n";
      } else {
-         searchOutput.innerText += "unavailable\n";
+         searchOutput.innerText += "unavailable\n\n";
      }
+
  }
  
  //Linking up functions to actual search bar functionality
