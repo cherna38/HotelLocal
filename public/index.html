@@ -48,22 +48,25 @@
                 <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"></path>
               </svg>
             </div>
-            <input id="search" type="textfield" placeholder="Location" />
+            <input id="search" type="textfield" placeholder="Location" type="submit" onclick="othername();"/>
           </div>
-          
+           <!--<button id='subButton' type='button'>Print your Location!</button>-->
+           <!--<p id='result'></p></div>-->
           <div class="input-field fifth-wrap">
             <!--<button id="searchButton" class="btn-search" type="button" onclick="savedata()" ><a href="pages/Hotels.html">SEARCH</a></button>-->
             <button id="searchButton" class="btn-search" type="button">SEARCH</button>
           </div>
         </div>
-		<button id="parkFilter" class="filterBtn" type="button">Free Parking</button>
-		<button id="wifiFilter" class="filterBtn" type="button">Wi-Fi availability</button>
-		<button id="ratingLow" class="filterBtn" type="button">Rating from Low to High</button>
-		<button id="ratingHigh" class="filterBtn" type="button">Rating from High to Low</button>
-		<pre id="results">Hotel Results here..</pre>
       </form>
     </div>
-	
+    <div class="search-results">
+    <button id="parkFilter" class="filterBtn" type="button">Free Parking</button>
+		<button id="wifiFilter" class="filterBtn" type="button">Wi-Fi availability</button>
+		<button id="ratingLow" class="filterBtn" type="button">Rating from Low to High</button>
+    <button id="ratingHigh" class="filterBtn" type="button">Rating from High to Low</button>
+  </div>
+  <div class= "results-fb">
+		<pre id="results">Hotel Results here..</pre>
 	<script src="https://www.gstatic.com/firebasejs/5.5.8/firebase.js"></script>
 	<!-- Firebase App is always required and must be first -->
 	<script src="https://www.gstatic.com/firebasejs/5.5.8/firebase-app.js"></script>
@@ -73,8 +76,28 @@
 	<script src="https://www.gstatic.com/firebasejs/5.5.8/firebase-database.js"></script>
 	<script src="https://www.gstatic.com/firebasejs/5.5.8/firebase-firestore.js"></script>
 	<script src="https://www.gstatic.com/firebasejs/5.5.8/firebase-functions.js"></script>
-	
-	<script src="script.js"></script>
+
+  <script src="script.js"></script>
+  </div>
 </body> 
     
 </html>
+
+<script>
+// the function which handles the input field logic to put on another page
+function getUserName() {
+    var nameField = document.getElementById('search').value;
+    var result = document.getElementById('result');
+    
+    if (nameField.length < 3) {
+        result.textContent = 'Not a Valid City';
+
+    } else {
+        result.textContent =  nameField;
+    }
+}
+// use an eventlistener for the event
+var subButton = document.getElementById('subButton');
+subButton.addEventListener('click', getUserName, false);
+</script>
+

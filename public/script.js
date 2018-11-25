@@ -1,5 +1,13 @@
 // Initialize Firebase
-
+var config = {
+    apiKey: "AIzaSyB9OMhcTdFNT5CUOnbAcXrM2Y2--DPSd9k",
+    authDomain: "hotel-local-cs115.firebaseapp.com",
+    databaseURL: "https://hotel-local-cs115.firebaseio.com",
+    projectId: "hotel-local-cs115",
+    storageBucket: "hotel-local-cs115.appspot.com",
+    messagingSenderId: "854556195678"
+  };
+  firebase.initializeApp(config);
 
 /* Primary code references for search bar (so far):
  * 
