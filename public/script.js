@@ -69,7 +69,6 @@ var rateSort = false;
 var priceFilter = false;
 var lowestPrice = false;
 var highestPrice = false;
-var priceSort = false;
 var noPricing = false;
 
 //Given user's searchbar input, if city is valid, call hotelLoop
@@ -129,15 +128,20 @@ function hotelLoop(hotelCity) {
 	if (priceFilter) {
 		//set up range of pricing
 		hotelQuery = hotelQuery.where('priceSummer', '<=', priceIn);
-	}
-	
-	//in case of sorting based on rating: high -> low
-	if (rateSort) {
-		hotelQuery = hotelQuery.orderBy('Rating', 'desc');
-	} else if (lowestPrice) { //in case of sorting based on price: high -> low
-		hotelQuery = hotelQuery.orderBy('priceSummer');
-	} else if (highestPrice) { //in case of sorting based on price: low -> high
-		hotelQuery = hotelQuery.orderBy('priceSummer', 'desc');
+		if (lowestPrice) { //in case of sorting based on price: high -> low
+			hotelQuery = hotelQuery.orderBy('priceSummer');
+		} else if (highestPrice) { //in case of sorting based on price: low -> high
+			hotelQuery = hotelQuery.orderBy('priceSummer', 'desc');
+		}
+	} else {
+		//in case of sorting based on rating: high -> low
+		if (rateSort) {
+			hotelQuery = hotelQuery.orderBy('Rating', 'desc');
+		} else if (lowestPrice) { //in case of sorting based on price: high -> low
+			hotelQuery = hotelQuery.orderBy('priceSummer');
+		} else if (highestPrice) { //in case of sorting based on price: low -> high
+			hotelQuery = hotelQuery.orderBy('priceSummer', 'desc');
+		}
 	}
 	
 	//Within each document of the hotel collection
