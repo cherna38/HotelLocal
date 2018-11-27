@@ -37,8 +37,8 @@ const searchOutput = document.querySelector("#results");
 
 const parkButton = document.querySelector("#parkFilter");
 const wifiButton = document.querySelector("#wifiFilter");
-//const rateAscButton = document.querySelector("#ratingLow");
-//const rateDesButton = document.querySelector("#ratingHigh");
+
+const rateDesButton = document.querySelector("#rateHigh");
 
 const rateOneButton = document.querySelector("#ratingOne");
 const rateTwoButton = document.querySelector("#ratingTwo");
@@ -58,14 +58,18 @@ const clearFilterButton = document.querySelector("#clearFilter");
 //Making universal input variable
 var inputCity = '';
 
+var hotelQuery;
+
 var rateIn = 0;
 var parkFilter = false;
 var wifiFilter = false;
 var rateFilter = false;
+var rateSort = false;
+
 var priceFilter = false;
 var lowestPrice = false;
 var highestPrice = false;
-
+var priceSort = false;
 var noPricing = false;
 
 //Given user's searchbar input, if city is valid, call hotelLoop
@@ -73,7 +77,7 @@ function pickCity() {
 	inputCity = searchInput.value.toLowerCase();
 	//If input city is Palo Alto:
 	if (inputCity == "palo alto") {;
-		noPricing = false;
+		noPricing = true;
 		hotelLoop(paRef);
 	} else if (inputCity == "san luis obispo") {
 		//If San Luis Obispo:
@@ -95,27 +99,51 @@ function hotelLoop(hotelCity) {
 	//Clear output box upon each search request
 	searchOutput.innerText = "";
 	
-	//refer to hotels collection in given city
-	var hotelQuery = hotelCity.collection('Hotels');
-	
+	//in case of rating filter
 	if (rateFilter) {
-		hotelQuery = hotelQuery.where('Rating', '>=', rateIn).orderBy('Rating', 'desc');
+		//refer to hotels collection in given city
+		switch (rateIn) {
+			//rating 1 star & up
+			case 1:
+				hotelQuery = hotelCity.collection('Hotels');
+				break;
+			//rating 2 stars & up
+			case 2:
+				hotelQuery = hotelCity.collection('Hotels 2 Star');
+				break;
+			//rating 3 stars & up
+			case 3:
+				hotelQuery = hotelCity.collection('Hotels 3 Star');
+				break;
+			//rating 4 stars & up
+			case 4:
+				hotelQuery = hotelCity.collection('Hotels 4 Star');
+				break;
+		}
+	} else {
+		//use default collection in case of no rating filter
+		hotelQuery = hotelCity.collection('Hotels');
 	}
 	
+	//in case of price filtering
 	if (priceFilter) {
-		hotelQuery = hotelQuery.where('priceSummer', '<=', priceIn).orderBy('priceSummer', 'desc');
+		//set up range of pricing
+		hotelQuery = hotelQuery.where('priceSummer', '<=', priceIn);
 	}
 	
-	if (lowestPrice) {
+	//in case of sorting based on rating: high -> low
+	if (rateSort) {
+		hotelQuery = hotelQuery.orderBy('Rating', 'desc');
+	} else if (lowestPrice) { //in case of sorting based on price: high -> low
 		hotelQuery = hotelQuery.orderBy('priceSummer');
-	}
-	
-	if (highestPrice) {
+	} else if (highestPrice) { //in case of sorting based on price: low -> high
 		hotelQuery = hotelQuery.orderBy('priceSummer', 'desc');
 	}
 	
+	//Within each document of the hotel collection
 	hotelQuery.get().then(function(hotelSnap) {
 		hotelSnap.docs.forEach(function(hotelDoc) {
+			//call the printing function
 			hotelPrint(hotelDoc);
 		})
 	}).catch(function(error) {
@@ -125,13 +153,16 @@ function hotelLoop(hotelCity) {
 
 //For a given hotel document, print it's attributes
 function hotelPrint(hotel) {
+	//Obtaining the hotel data:
 	const currentHotel = hotel.data();
 	
+	//Skip entry if parking filter is on and parking != true
 	if (parkFilter && (currentHotel.Parking != true)) {
 		searchOutput.innerText += "";
 		return;
 	}
 	
+	//Skip entry if wifi filter is on and wifi != true
 	if (wifiFilter && (currentHotel.Wifi != true)) {
 		searchOutput.innerText += "";
 		return;
@@ -147,12 +178,14 @@ function hotelPrint(hotel) {
 		searchOutput.innerText += "none,";
 	}
 	
+	//If no pricing available for city, don't print pricing attribute
 	if (!noPricing) {
 		searchOutput.innerText += "\tSummer Pricing: $" + currentHotel.priceSummer;
 	}
 	
+	//Print out rating
 	searchOutput.innerText += "\tRating: " + currentHotel.Rating + ",\tWifi: ";
-	
+	//and wifi availability
 	if (currentHotel.Wifi == true) {
 		searchOutput.innerText += "available\n";
 	} else {
@@ -165,6 +198,7 @@ searchButton.addEventListener("click", function() {
 	pickCity();
 })
 
+//Attempt at linking ENTER key to search button, rather than resetting
 /*searchInput.addEventListener("keyup", function(event) {
 	//Cancel default action
 	event.preventDefault();
@@ -182,6 +216,13 @@ parkButton.addEventListener("click", function() {
 //Wifi Filtering
 wifiButton.addEventListener("click", function() {
 	wifiFilter = true;
+	pickCity();
+})
+
+rateDesButton.addEventListener("click", function() {
+	rateSort = true;
+	lowestPrice = false;
+	highestPrice = false;
 	pickCity();
 })
 
@@ -214,31 +255,36 @@ rateFourButton.addEventListener("click", function() {
 	pickCity();
 })
 
+//Sorting entries based on pricing from low to high
 priceLowToHigh.addEventListener("click", function() {
 	inputCity = searchInput.value.toLowerCase();
-	if (inputCity == 'santa monica') {
+	if ((inputCity == 'santa monica') || (inputCity == 'palo alto')) {
 		window.alert(inputCity + " doesn't have prices to sort");
 	} else {
+		rateSort = false;
 		lowestPrice = true;
 		highestPrice = false;
 		pickCity();
 	}
 })
 
+//Sorting entries based on pricing from high to low
 priceHighToLow.addEventListener("click", function() {
 	inputCity = searchInput.value.toLowerCase();
-	if (inputCity == 'santa monica') {
+	if ((inputCity == 'santa monica') || (inputCity == 'palo alto')) {
 		window.alert(inputCity + " doesn't have prices to sort");
 	} else {
+		rateSort = false;
 		lowestPrice = false;
 		highestPrice = true;
 		pickCity();
 	}
 })
 
+//price $800 and below
 priceEightHundred.addEventListener("click", function() {
 	inputCity = searchInput.value.toLowerCase();
-	if (inputCity == 'santa monica') {
+	if ((inputCity == 'santa monica') || (inputCity == 'palo alto')) {
 		window.alert(inputCity + " doesn't have prices to sort");
 	} else {
 		priceFilter = true;
@@ -246,9 +292,11 @@ priceEightHundred.addEventListener("click", function() {
 		pickCity();
 	}
 })
+
+//price $600 and below
 priceSixHundred.addEventListener("click", function() {
 	inputCity = searchInput.value.toLowerCase();
-	if (inputCity == 'santa monica') {
+	if ((inputCity == 'santa monica') || (inputCity == 'palo alto')) {
 		window.alert(inputCity + " doesn't have prices to sort");
 	} else {
 		priceFilter = true;
@@ -256,9 +304,11 @@ priceSixHundred.addEventListener("click", function() {
 		pickCity();
 	}
 })
+
+//price $400 and below
 priceFourHundred.addEventListener("click", function() {
 	inputCity = searchInput.value.toLowerCase();
-	if (inputCity == 'santa monica') {
+	if ((inputCity == 'santa monica') || (inputCity == 'palo alto')) {
 		window.alert(inputCity + " doesn't have prices to sort");
 	} else {
 		priceFilter = true;
@@ -266,9 +316,11 @@ priceFourHundred.addEventListener("click", function() {
 		pickCity();
 	}
 })
+
+//price $200 and below
 priceTwoHundred.addEventListener("click", function() {
 	inputCity = searchInput.value.toLowerCase();
-	if (inputCity == 'santa monica') {
+	if ((inputCity == 'santa monica') || (inputCity == 'palo alto')) {
 		window.alert(inputCity + " doesn't have prices to sort");
 	} else {
 		priceFilter = true;
@@ -281,10 +333,15 @@ priceTwoHundred.addEventListener("click", function() {
 clearFilterButton.addEventListener("click", function() {
 	parkFilter = false;
 	wifiFilter = false;
+	
+	rateSort = false;
 	rateFilter = false;
+	
 	priceFilter = false;
 	lowestPrice = false;
 	highestPrice = false;
+	
 	rateIn = 0;
+	priceIn = 0;
 	pickCity();
 })
