@@ -35,6 +35,10 @@ const searchButton = document.querySelector("#searchButton");
 const searchInput = document.querySelector("#search");
 const searchOutput = document.querySelector("#results");
 
+const winterPrice = document.querySelector("#winterPrice"); 
+const springPrice = document.querySelector("#springPrice"); 
+const summerPrice = document.querySelector("#summerPrice"); 
+
 const parkButton = document.querySelector("#parkFilter");
 const wifiButton = document.querySelector("#wifiFilter");
 
@@ -60,6 +64,9 @@ var inputCity = '';
 
 var hotelQuery;
 
+//Default: prints out summer prices
+var priceSeason = "winter";
+
 var rateIn = 0;
 var parkFilter = false;
 var wifiFilter = false;
@@ -69,27 +76,47 @@ var rateSort = false;
 var priceFilter = false;
 var lowestPrice = false;
 var highestPrice = false;
-var noPricing = false;
 
 //Given user's searchbar input, if city is valid, call hotelLoop
 function pickCity() {
 	inputCity = searchInput.value.toLowerCase();
 	//If input city is Palo Alto:
-	if (inputCity == "palo alto") {;
-		noPricing = true;
+	if (inputCity == "palo alto") {
 		hotelLoop(paRef);
 	} else if (inputCity == "san luis obispo") {
 		//If San Luis Obispo:
-		noPricing = false;
 		hotelLoop(sloRef);
 	} else if (inputCity == "santa monica") {
 		//If Santa Monica: 
-		noPricing = true;
 		hotelLoop(smRef);
 	} else {
 		//Otherwise, print unavailable message and display window
 		searchOutput.innerText = "Information for hotels in " + inputCity + " unavailable\n";
 		window.alert("Sorry, we don't have info for hotels in that city yet.");
+	}
+}
+
+function priceSort(hotelList, price, ascendOrder) {
+	var priceAttribute;
+	switch (price) {
+		//if winter -> grab priceWinter
+		case 'winter':
+			priceAttribute = 'priceWinter';
+			break;
+		//if spring -> grab priceSpring
+		case 'spring':
+			priceAttribute = 'priceSpring';
+			break;
+		//if summer -> grab priceSummer
+		case 'summer':
+			priceAttribute = 'priceSummer';
+			break;
+	}
+	//if sorting from high to low
+	if (ascendOrder == 'desc') {
+		return hotelList.orderBy(priceAttribute, 'desc');
+	} else { //if sorting from low to high
+		return hotelList.orderBy(priceAttribute);
 	}
 }
 
@@ -127,20 +154,32 @@ function hotelLoop(hotelCity) {
 	//in case of price filtering
 	if (priceFilter) {
 		//set up range of pricing
-		hotelQuery = hotelQuery.where('priceSummer', '<=', priceIn);
+		switch (priceSeason) {
+			case 'winter':
+				hotelQuery = hotelQuery.where('priceWinter', "<=", priceIn);
+				break;
+				
+			case 'spring':
+				hotelQuery = hotelQuery.where('priceSpring', "<=", priceIn);
+				break;
+				
+			case 'summer':
+				hotelQuery = hotelQuery.where('priceSummer', '<=', priceIn);
+				break;
+		}
+		
 		if (lowestPrice) { //in case of sorting based on price: high -> low
-			hotelQuery = hotelQuery.orderBy('priceSummer');
+			hotelQuery = priceSort(hotelQuery, priceSeason, 'asc');
 		} else if (highestPrice) { //in case of sorting based on price: low -> high
-			hotelQuery = hotelQuery.orderBy('priceSummer', 'desc');
+			hotelQuery = priceSort(hotelQuery, priceSeason, 'desc');
 		}
 	} else {
-		//in case of sorting based on rating: high -> low
 		if (rateSort) {
 			hotelQuery = hotelQuery.orderBy('Rating', 'desc');
 		} else if (lowestPrice) { //in case of sorting based on price: high -> low
-			hotelQuery = hotelQuery.orderBy('priceSummer');
+			hotelQuery = priceSort(hotelQuery, priceSeason, 'asc');
 		} else if (highestPrice) { //in case of sorting based on price: low -> high
-			hotelQuery = hotelQuery.orderBy('priceSummer', 'desc');
+			hotelQuery = priceSort(hotelQuery, priceSeason, 'desc');
 		}
 	}
 	
@@ -182,10 +221,21 @@ function hotelPrint(hotel) {
 		searchOutput.innerText += "none,";
 	}
 	
-	//If no pricing available for city, don't print pricing attribute
-	if (!noPricing) {
-		searchOutput.innerText += "\tSummer Pricing: $" + currentHotel.priceSummer;
+	switch (priceSeason) {
+		//Print out winter pricing attribute
+		case "winter":
+			searchOutput.innerText += "\tWinter Pricing: $" + currentHotel.priceWinter;
+			break;
+		//Print out spring pricing attribute	
+		case "spring":
+			searchOutput.innerText += "\tSpring Pricing: $" + currentHotel.priceSpring;
+			break;
+		//Print out summer pricing attribute
+		case "summer":
+			searchOutput.innerText += "\tSummer Pricing: $" + currentHotel.priceSummer;
+			break;
 	}
+	
 	
 	//Print out rating
 	searchOutput.innerText += "\tRating: " + currentHotel.Rating + ",\tWifi: ";
@@ -210,6 +260,24 @@ searchButton.addEventListener("click", function() {
 		pickCity();
 	}
 })*/
+
+//Display winter prices
+winterPrice.addEventListener("click", function() {
+	priceSeason = "winter";
+	pickCity();
+})
+
+//Display spring prices
+springPrice.addEventListener("click", function() {
+	priceSeason = "spring";
+	pickCity();
+})
+
+//Display summer prices
+summerPrice.addEventListener("click", function() {
+	priceSeason = "summer";
+	pickCity();
+})
 
 //Parking Filtering
 parkButton.addEventListener("click", function() {
@@ -262,75 +330,51 @@ rateFourButton.addEventListener("click", function() {
 //Sorting entries based on pricing from low to high
 priceLowToHigh.addEventListener("click", function() {
 	inputCity = searchInput.value.toLowerCase();
-	if ((inputCity == 'santa monica') || (inputCity == 'palo alto')) {
-		window.alert(inputCity + " doesn't have prices to sort");
-	} else {
-		rateSort = false;
-		lowestPrice = true;
-		highestPrice = false;
-		pickCity();
-	}
+	rateSort = false;
+	lowestPrice = true;
+	highestPrice = false;
+	pickCity();
 })
 
 //Sorting entries based on pricing from high to low
 priceHighToLow.addEventListener("click", function() {
 	inputCity = searchInput.value.toLowerCase();
-	if ((inputCity == 'santa monica') || (inputCity == 'palo alto')) {
-		window.alert(inputCity + " doesn't have prices to sort");
-	} else {
-		rateSort = false;
-		lowestPrice = false;
-		highestPrice = true;
-		pickCity();
-	}
+	rateSort = false;
+	lowestPrice = false;
+	highestPrice = true;
+	pickCity();
 })
 
 //price $800 and below
 priceEightHundred.addEventListener("click", function() {
 	inputCity = searchInput.value.toLowerCase();
-	if ((inputCity == 'santa monica') || (inputCity == 'palo alto')) {
-		window.alert(inputCity + " doesn't have prices to sort");
-	} else {
-		priceFilter = true;
-		priceIn = 800;
-		pickCity();
-	}
+	priceFilter = true;
+	priceIn = 800;
+	pickCity();
 })
 
 //price $600 and below
 priceSixHundred.addEventListener("click", function() {
 	inputCity = searchInput.value.toLowerCase();
-	if ((inputCity == 'santa monica') || (inputCity == 'palo alto')) {
-		window.alert(inputCity + " doesn't have prices to sort");
-	} else {
-		priceFilter = true;
-		priceIn = 600;
-		pickCity();
-	}
+	priceFilter = true;
+	priceIn = 600;
+	pickCity();
 })
 
 //price $400 and below
 priceFourHundred.addEventListener("click", function() {
 	inputCity = searchInput.value.toLowerCase();
-	if ((inputCity == 'santa monica') || (inputCity == 'palo alto')) {
-		window.alert(inputCity + " doesn't have prices to sort");
-	} else {
-		priceFilter = true;
-		priceIn = 400;
-		pickCity();
-	}
+	priceFilter = true;
+	priceIn = 400;
+	pickCity();
 })
 
 //price $200 and below
 priceTwoHundred.addEventListener("click", function() {
 	inputCity = searchInput.value.toLowerCase();
-	if ((inputCity == 'santa monica') || (inputCity == 'palo alto')) {
-		window.alert(inputCity + " doesn't have prices to sort");
-	} else {
-		priceFilter = true;
-		priceIn = 200;
-		pickCity();
-	}
+	priceFilter = true;
+	priceIn = 200;
+	pickCity();
 })
 
 //Clear all filtering options
