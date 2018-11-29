@@ -257,32 +257,10 @@ searchButton.addEventListener("click", function() {
 	pickCity();
 })
 
-//Attempt at linking ENTER key to search button, rather than resetting
-/*searchInput.addEventListener("keyup", function(event) {
-	//Cancel default action
-	event.preventDefault();
-	if (event.keyCode === 13) {
-		pickCity();
-	}
-})*/
-
-//Display winter prices
-winterPrice.addEventListener("click", function() {
-	priceSeason = "winter";
+function seasonChange() {
+	priceSeason = document.getElementById("seasonalPrice").value;
 	pickCity();
-})
-
-//Display spring prices
-springPrice.addEventListener("click", function() {
-	priceSeason = "spring";
-	pickCity();
-})
-
-//Display summer prices
-summerPrice.addEventListener("click", function() {
-	priceSeason = "summer";
-	pickCity();
-})
+}
 
 //Parking Filtering
 parkButton.addEventListener("click", function() {

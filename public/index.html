@@ -32,9 +32,11 @@
           </div>
         </div>
 		
-		<button id="winterPrice" class="filterBtn" type="button">Winter Prices</button>
-		<button id="springPrice" class="filterBtn" type="button">Spring Prices</button>
-		<button id="summerPrice" class="filterBtn" type="button">Summer Prices</button>
+		<p>Price Season: <select name="Price Season" id="seasonalPrice" onchange="seasonChange()">
+			<option value="winter">Winter</option>
+			<option value="spring">Spring</option>
+			<option value="summer">Summer</option>
+		</select></p>
 		
 		<!--<h6>General Filtering</h6>-->
 		<button id="parkFilter" class="filterBtn" type="button">Free Parking</button>
