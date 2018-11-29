@@ -96,6 +96,18 @@ function pickCity() {
 	}
 }
 
+//Allow for price sorting
+function priceSortingOptions(queryHotel) {
+	if (lowestPrice) { //in case of sorting based on price: high -> low
+			return queryHotel = priceSort(queryHotel, priceSeason, 'asc');
+	} else if (highestPrice) { //in case of sorting based on price: low -> high
+			return queryHotel = priceSort(queryHotel, priceSeason, 'desc');
+	} else {
+		return queryHotel;
+	}
+}
+
+//Given displayed price and order of ascension, sort by price
 function priceSort(hotelList, price, ascendOrder) {
 	var priceAttribute;
 	switch (price) {
@@ -167,19 +179,12 @@ function hotelLoop(hotelCity) {
 				hotelQuery = hotelQuery.where('priceSummer', '<=', priceIn);
 				break;
 		}
-		
-		if (lowestPrice) { //in case of sorting based on price: high -> low
-			hotelQuery = priceSort(hotelQuery, priceSeason, 'asc');
-		} else if (highestPrice) { //in case of sorting based on price: low -> high
-			hotelQuery = priceSort(hotelQuery, priceSeason, 'desc');
-		}
+		hotelQuery = priceSortingOptions(hotelQuery);
 	} else {
 		if (rateSort) {
 			hotelQuery = hotelQuery.orderBy('Rating', 'desc');
-		} else if (lowestPrice) { //in case of sorting based on price: high -> low
-			hotelQuery = priceSort(hotelQuery, priceSeason, 'asc');
-		} else if (highestPrice) { //in case of sorting based on price: low -> high
-			hotelQuery = priceSort(hotelQuery, priceSeason, 'desc');
+		} else {
+			hotelQuery = priceSortingOptions(hotelQuery);
 		}
 	}
 	
