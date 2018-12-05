@@ -1,0 +1,5 @@
+To access the code for this project, look under the public file of the master branch,
+
+The home page is under index.html. 
+
+This folder is mostly just documentation.
